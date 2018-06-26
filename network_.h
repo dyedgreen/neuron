@@ -14,6 +14,7 @@ private:
   T mat_hidden[n][hidden][hidden];
   T mat_out[out][hidden];
   T bias[n+1][hidden];
+  T input[in];
   T state[n+1][hidden];
   T result[out];
 public:

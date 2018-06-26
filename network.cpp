@@ -101,6 +101,10 @@ void Network<T, n, in, out, hidden>::load(T *mat_in, T *mat_hidden, T *mat_out, 
 
 template<typename T, int n, int in, int out, int hidden>
 T* Network<T, n, in, out, hidden>::run(T input[in]) {
+  // Store input
+  for (int i = 0; i < in; i ++) {
+    this->input[i] = input[i];
+  }
   // In
   for (int i = 0, j; i < hidden; i ++) {
     // Matrix
@@ -162,7 +166,7 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
       // Backprop error
       tmp += this->mat_out[j][i] * (this->result[j] - target[j]);
       // Do gradient descend (hence -)
-      this->mat_out[j][i] -= learningRate * (this->result[j] - target[j]);
+      this->mat_out[j][i] -= learningRate * (this->result[j] - target[j]) * this->state[n][i];
     }
     this->state[n][i] = tmp * this->state[n][i] * (1 - this->state[n][i]);
   }
@@ -174,7 +178,7 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
         // Backprop error
         tmp += this->mat_hidden[l][j][i] * this->state[l+1][i];
         // Do gradient descend (hence -)
-        this->mat_hidden[l][j][i] -= learningRate * this->state[l+1][i];
+        this->mat_hidden[l][j][i] -= learningRate * this->state[l+1][i] * this->state[l][i];
       }
       this->state[l][i] = tmp * this->state[l][i] * (1 - this->state[l][i]);
     }
@@ -184,7 +188,7 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
     for (j = 0; j < hidden; j ++) {
       // No Backprop, since there are no more weights before this...
       // Do gradient descend (hence -)
-      this->mat_in[j][i] -= learningRate * this->state[0][i];
+      this->mat_in[j][i] -= learningRate * this->state[0][i] * this->input[i];
     }
   }
 }

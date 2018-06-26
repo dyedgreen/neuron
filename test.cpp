@@ -1,7 +1,9 @@
 #include <iostream>
+#include <cstdlib>
 #include "network.h"
 
 int main() {
+  srand(32423);
   // 2 -> 4 -> 4 -> 1 neural network
   neuron::Network<float, 1, 2, 1, 3> *net = new neuron::Network<float, 1, 2, 1, 3>(10);
   //net->useActivation = false;
@@ -20,18 +22,18 @@ int main() {
 
   std::cout << "\n\n";
 
-  for (int i = 0, n; i < 1000; i ++) {
-    n = i % 4;
+  for (int i = 0, n; i < 50000; i ++) {
+    n = rand() % 4;
     res = net->run(train[n]);
     //if (i % 5000 == 0) std::cout << "Iteration " << i << ": " << *res << std::endl;
-    net->backprop(target[n], 0.1);
+    net->backprop(target[n], 0.05);
   }
 
   std::cout << "\n\n";
 
   for (int i = 0; i < 4; i ++) {
     res = net->run(train[i]);
-    std::cout << "Case " << i << ": " << *res << " (should be " << target[i][0] << ")" << std::endl;
+    std::cout << "Case {" <<train[i][0]<<", "<<train[i][1]<< "}: " << *res << " (should be " << target[i][0] << ")" << std::endl;
   }
 
   std::cout << "\n\n";
