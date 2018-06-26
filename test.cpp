@@ -57,4 +57,5 @@ int main() {
   // Clean up
   delete net;
   // delete net2;
+  return 0;
 }
