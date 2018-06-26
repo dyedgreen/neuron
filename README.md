@@ -47,29 +47,32 @@ int main() {
 }
 ```
 
+
 ## The `Network` Class
 To use neuron, include the `"network.h"` header in your C++ file. The `Network` class is a template
 accessible from the namespace `neuron` and offers the following api:
 
 #### Template Parameters
 The template parameters determine the size of the network.
-```
+```C++
 neuron::Network<typename numeric_type, int number_of_hidden_layers, int input_size, int output_size, int hidden_size>
 
 Example:
 neuron::Network<float, 2, 2, 1, 4>
-Creates a network with two hidden layers of size 4 that takes two inputs and has one output.
 ```
+The above example creates a network with two hidden layers of size 4 that takes two inputs and has one output.
+
 #### Runtime Configuration
 You can tell a network to exclude bias or the use of it's activation function.
-```
+```C++
 network->use_activation = false; // Default is true
 network->use_bias = false; // Default is true
 ```
+
 #### Run and Backprop
 The network can be executed on an array input. The input is expected to be of the correct size. As an
 output, the network returns a pointer that point to consecutive numbers of the networks numeric type.
-```
+```C++
 float input[3] = {1, 2, 3};
 float *result;
 
@@ -81,18 +84,19 @@ for (i = 0; i < output_size; i ++) {
 ```
 After the network has run, you can call `backprop()` to execute a gradient descend step. **Calling
 `backprop()` before running the network at least once is undefined behavior**.
-```
+```C++
 float target[3] = {1, 2, 3};
 float learning_rate = 0.4;
 
 network->backprop(target, learning_rate);
 ```
-When you call run several times, the values held by the previously returned pointers will be
-overwritten.
+**When you call run several times, the values held by the previously returned pointers will be
+overwritten.**
+
 #### Print and Dump
 You can print the networks learned vales to the console. Print prints a human-readable output, while
 dump generates an output that is formatted as C++ array literals for easy copy-pasting.
-```
+```C++
 network->print();
 network->dump();
 ```
