@@ -37,8 +37,8 @@ T sig(T x) {
 }
 
 template<typename T>
-T randRange(T max, bool posNeg) {
-  if (posNeg) {
+T randRange(T max, bool pos_neg) {
+  if (pos_neg) {
     return (T)( 2 * (double)max * (double)rand() / (double)RAND_MAX - (double)max );
   }
   return (T)( (double)max * (double)rand() / (double)RAND_MAX );
@@ -69,8 +69,8 @@ Network<T, n, in, out, hidden>::Network(T max) {
       this->bias[i][j] = max ? randRange<T>(max, true) : (T)0;
     }
   }
-  this->useActivation = true;
-  this->useBias = true;
+  this->use_activation = true;
+  this->use_bias = true;
 }
 
 template<typename T, int n, int in, int out, int hidden>
@@ -113,11 +113,11 @@ T* Network<T, n, in, out, hidden>::run(T input[in]) {
       this->state[0][i] += input[j] * this->mat_in[i][j];
     }
     // Bias
-    if (this->useBias) {
+    if (this->use_bias) {
       this->state[0][i] += this->bias[0][i];
     }
     // Activation
-    if (this->useActivation) {
+    if (this->use_activation) {
       this->state[0][i] = sig<T>(this->state[0][i]);
     }
   }
@@ -130,11 +130,11 @@ T* Network<T, n, in, out, hidden>::run(T input[in]) {
         this->state[l+1][i] += this->state[l][j] * this->mat_hidden[l][i][j];
       }
       // Bias
-      if (this->useBias) {
+      if (this->use_bias) {
         this->state[l+1][i] += this->bias[l+1][i];
       }
       // Activation
-      if (this->useActivation) {
+      if (this->use_activation) {
         this->state[l+1][i] = sig<T>(this->state[l+1][i]);
       }
     }
@@ -152,13 +152,14 @@ T* Network<T, n, in, out, hidden>::run(T input[in]) {
 }
 
 template<typename T, int n, int in, int out, int hidden>
-void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
+void Network<T, n, in, out, hidden>::backprop(T target[out], T learning_rate) {
   // Find gradient w.r.t. wights + do gradient descend.
   // ====
   // In practice: Go backwards using the transpose of the matrices, the fact
   // that sig' = (1 - sig) * sig, and the chain rule. For the weights this means:
   // FeedTo * FeedFrom = weight, where FeedTo is propagated backwards.
   // TODO: Add in bias (right now, this does not work with bias...)
+
   // Out
   for (int i = 0, j; i < hidden; i ++) {
     T tmp = (T)0;
@@ -166,9 +167,11 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
       // Backprop error
       tmp += this->mat_out[j][i] * (this->result[j] - target[j]);
       // Do gradient descend (hence -)
-      this->mat_out[j][i] -= learningRate * (this->result[j] - target[j]) * this->state[n][i];
+      this->mat_out[j][i] -= learning_rate * (this->result[j] - target[j]) * this->state[n][i];
     }
     this->state[n][i] = tmp * this->state[n][i] * (1 - this->state[n][i]);
+    // Gradient for bias
+    this->bias[n][i] -= learning_rate * this->state[n][i];
   }
   // Hidden
   for (int l = n-1, i, j; l >= 0; l --) {
@@ -178,9 +181,11 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
         // Backprop error
         tmp += this->mat_hidden[l][j][i] * this->state[l+1][i];
         // Do gradient descend (hence -)
-        this->mat_hidden[l][j][i] -= learningRate * this->state[l+1][i] * this->state[l][i];
+        this->mat_hidden[l][j][i] -= learning_rate * this->state[l+1][i] * this->state[l][i];
       }
       this->state[l][i] = tmp * this->state[l][i] * (1 - this->state[l][i]);
+    // Gradient for bias
+    this->bias[l][i] -= learning_rate * this->state[l][i];
     }
   }
   // Input
@@ -188,7 +193,7 @@ void Network<T, n, in, out, hidden>::backprop(T target[out], T learningRate) {
     for (j = 0; j < hidden; j ++) {
       // No Backprop, since there are no more weights before this...
       // Do gradient descend (hence -)
-      this->mat_in[j][i] -= learningRate * this->state[0][i] * this->input[i];
+      this->mat_in[j][i] -= learning_rate * this->state[0][i] * this->input[i];
     }
   }
 }

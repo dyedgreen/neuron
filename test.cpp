@@ -3,11 +3,11 @@
 #include "network.h"
 
 int main() {
-  srand(32423);
+  srand(12345);
   // 2 -> 4 -> 4 -> 1 neural network
-  neuron::Network<float, 1, 2, 1, 3> *net = new neuron::Network<float, 1, 2, 1, 3>(10);
-  //net->useActivation = false;
-  net->useBias = false;
+  neuron::Network<float, 1, 2, 1, 3> *net = new neuron::Network<float, 1, 2, 1, 3>(5);
+  //net->use_activation = false;
+  // net->use_bias = false;
   net->print();
   // net->dump();
 
@@ -22,11 +22,10 @@ int main() {
 
   std::cout << "\n\n";
 
-  for (int i = 0, n; i < 50000; i ++) {
-    n = rand() % 4;
+  for (int i = 0, n; i < 5e4; i ++) {
+    n = i % 4;
     res = net->run(train[n]);
-    //if (i % 5000 == 0) std::cout << "Iteration " << i << ": " << *res << std::endl;
-    net->backprop(target[n], 0.05);
+    net->backprop(target[n], 0.4);
   }
 
   std::cout << "\n\n";

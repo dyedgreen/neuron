@@ -18,8 +18,8 @@ private:
   T state[n+1][hidden];
   T result[out];
 public:
-  bool useActivation;
-  bool useBias;
+  bool use_activation;
+  bool use_bias;
   Network(T);
   ~Network();
   void load(T*, T*, T*, T*);
