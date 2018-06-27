@@ -14,7 +14,7 @@ int main() {
   srand(12345);
 
   // Init a network with N hidden layers of size HIDDEN, an input size of IN and an
-  // output size of OUT (<N, IN, OUT, HIDDEN>). Initialize to random values between +/-10.
+  // output size of OUT (<N, IN, OUT, HIDDEN>). Initialize to random values between +/-5.
   neuron::Network<float, 1, 2, 1, 3> *net = new neuron::Network<float, 1, 2, 1, 3>(5);
 
   // We will train this to evaluate an X-OR
