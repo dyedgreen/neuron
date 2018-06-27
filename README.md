@@ -46,7 +46,8 @@ int main() {
   return 0;
 }
 ```
-
+The above example can be found at `helloworld.cpp` and compiled with `g++ helloworld.cpp network.cpp -o hello`
+(assuming you want to use the GNU compiler).
 
 ## The `Network` Class
 To use neuron, include the `"network.h"` header in your C++ file. The `Network` class is a template
